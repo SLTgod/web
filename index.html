@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница профиля</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        body {
+            font-family: Radiotechnika, sans-serif;
+            src: url('{{ url_for('static', filename='fonts/Radiotechnika.ttf') }}') format('truetype');
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            background-image: url("static/background.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin-top: 90px;
+        }
+
+        .thank-you-message {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 250px;
+            background-color: white;
+            border: 2px solid #000;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="background-square">
+            <div class="profile-header">
+                <div class="profile-image-container">
+                    <img src="static/profile.jpg" alt="Профиль" class="profile-image">
+                </div>
+                <div class="profile-info">
+                    <h1>Корней<br>Кирилл</h1>
+                    <p>Занимался 2 года дзюдо<br>Ученик колледжа ВятГУ<br>19 лет, вес 64, рост 182см, размер ноги 42, размер одежды М, размер IQ 200</p>
+                </div>
+            </div>
+
+            <div class="car-section">
+                <h2>Подарите кто-нибудь</h2>
+                <div class="car-details">
+                    <div class="car1-background">
+                        <img src="static/car1.jpg" alt="Автомобиль 1" class="car-image">
+                    </div>
+                    <img src="static/palka.jpg" alt="Палка" class="separator-image">
+                    <div class="car2-container">
+                        <p>M5 F90<br><br>Мощность: 600 HP<br>Двигатель: 4.4 L<br>Скорость: 350 km/h<br>Вес: 1895 KG</p>
+                        <img src="static/foncar1.jpg" alt="Фон для автомобиля 1" class="foncar1-image">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <form id="contact-form" method="POST" action="/submit-email">
+                    <div class="label-container">
+                        <label for="email">Напишите свою почту для связи:</label>
+                    </div>
+                    <div class="input-container">
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="button-container">
+                        <button type="submit">Отправить</button>
+                    </div>
+                </form>
+            </div>
+
+            <footer>
+                <p>Быть воином жить вечно</p>
+            </footer>
+        </div>
+    </div>
+
+    <div id="thank-you-message" class="thank-you-message">
+        <p>Спасибо за отправку! Мы свяжемся с тобой по почте.</p>
+    </div>
+
+    <script>
+        document.getElementById("contact-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value;
+            fetch("/submit-email", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `email=${encodeURIComponent(email)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    const thankYouMessage = document.getElementById("thank-you-message");
+                    thankYouMessage.style.display = "block";
+                    setTimeout(() => {
+                        thankYouMessage.style.display = "none";
+                    }, 3000);
+                }
+            })
+            .catch(error => console.error("Ошибка при отправке формы:", error));
+        });
+    </script>
+</body>
+</html>
